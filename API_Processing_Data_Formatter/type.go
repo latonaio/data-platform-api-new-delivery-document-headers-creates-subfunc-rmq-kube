@@ -1,23 +1,23 @@
 package api_processing_data_formatter
 
 type SDC struct {
-	MetaData                  *MetaData                  `json:"MetaData"`
-	ProcessType               *ProcessType               `json:"ProcessType"`
-	OrderItem                 []*OrderItem               `json:"OrderItem"`
-	OrdersItemScheduleLine    []*OrdersItemScheduleLine  `json:"OrdersItemScheduleLine"`
-	OrdersHeader              []*OrdersHeader            `json:"OrdersHeader"`
-	CalculateDeliveryDocument *CalculateDeliveryDocument `json:"CalculateDeliveryDocument"`
-	DocumentDate              *DocumentDate              `json:"DocumentDate"`
-	PaymentTerms              []*PaymentTerms            `json:"PaymentTerms"`
-	InvoiceDocumentDate       *InvoiceDocumentDate       `json:"InvoiceDocumentDate"`
-	HeaderGrossWeight         *HeaderGrossWeight         `json:"HeaderGrossWeight"`
-	HeaderNetWeight           *HeaderNetWeight           `json:"HeaderNetWeight"`
-	CreationDateHeader        *CreationDateHeader        `json:"CreationDateHeader"`
-	LastChangeDateHeader      *LastChangeDateHeader      `json:"LastChangeDateHeader"`
-	CreationTimeHeader        *CreationTimeHeader        `json:"CreationTimeHeader"`
-	LastChangeTimeHeader      *LastChangeTimeHeader      `json:"LastChangeTimeHeader"`
-	DeliveryDocumentItem      []*DeliveryDocumentItem    `json:"DeliveryDocumentItem"`
-	OrdersItem                []*OrdersItem              `json:"OrdersItem"`
+	MetaData                  *MetaData                    `json:"MetaData"`
+	ProcessType               *ProcessType                 `json:"ProcessType"`
+	OrderItem                 []*OrderItem                 `json:"OrderItem"`
+	OrdersItemScheduleLine    []*OrdersItemScheduleLine    `json:"OrdersItemScheduleLine"`
+	OrdersHeader              []*OrdersHeader              `json:"OrdersHeader"`
+	CalculateDeliveryDocument []*CalculateDeliveryDocument `json:"CalculateDeliveryDocument"`
+	DocumentDate              *DocumentDate                `json:"DocumentDate"`
+	PaymentTerms              []*PaymentTerms              `json:"PaymentTerms"`
+	InvoiceDocumentDate       *InvoiceDocumentDate         `json:"InvoiceDocumentDate"`
+	HeaderGrossWeight         *HeaderGrossWeight           `json:"HeaderGrossWeight"`
+	HeaderNetWeight           *HeaderNetWeight             `json:"HeaderNetWeight"`
+	CreationDateHeader        *CreationDateHeader          `json:"CreationDateHeader"`
+	LastChangeDateHeader      *LastChangeDateHeader        `json:"LastChangeDateHeader"`
+	CreationTimeHeader        *CreationTimeHeader          `json:"CreationTimeHeader"`
+	LastChangeTimeHeader      *LastChangeTimeHeader        `json:"LastChangeTimeHeader"`
+	DeliveryDocumentItem      []*DeliveryDocumentItem      `json:"DeliveryDocumentItem"`
+	OrdersItem                []*OrdersItem                `json:"OrdersItem"`
 }
 
 // Initializer
@@ -128,8 +128,19 @@ type CalculateDeliveryDocumentQueryGets struct {
 }
 
 type CalculateDeliveryDocument struct {
-	DeliveryDocumentLatestNumber *int `json:"DeliveryDocumentLatestNumber"`
-	DeliveryDocument             int  `json:"DeliveryDocument"`
+	DeliveryDocumentLatestNumber *int   `json:"DeliveryDocumentLatestNumber"`
+	DeliveryDocument             int    `json:"DeliveryDocument"`
+	OrderID                      int    `json:"OrderID"`
+	OrderItem                    int    `json:"OrderItem"`
+	DeliverFromPlant             string `json:"DeliverFromPlant"`
+	DeliverToPlant               string `json:"DeliverToPlant"`
+}
+
+type DeliverPlant struct {
+	DeliverFromPlant string `json:"DeliverFromPlant"`
+	DeliverToPlant   string `json:"DeliverToPlant"`
+	OrderID          int    `json:"OrderID"`
+	OrderItem        int    `json:"OrderItem"`
 }
 
 type DocumentDate struct {
@@ -232,6 +243,8 @@ type OrdersItem struct {
 	ItemGrossWeight                               *float32 `json:"ItemGrossWeight"`
 	ProductNetWeight                              *float32 `json:"ProductNetWeight"`
 	ItemNetWeight                                 *float32 `json:"ItemNetWeight"`
+	InternalCapacityQuantity                      *float32 `json:"InternalCapacityQuantity"`
+	InternalCapacityQuantityUnit                  *string  `json:"InternalCapacityQuantityUnit"`
 	NetAmount                                     *float32 `json:"NetAmount"`
 	TaxAmount                                     *float32 `json:"TaxAmount"`
 	GrossAmount                                   *float32 `json:"GrossAmount"`

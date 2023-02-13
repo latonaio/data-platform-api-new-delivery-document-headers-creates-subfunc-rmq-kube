@@ -86,10 +86,10 @@ func (f *SubFunction) OrderItemByArraySpec(
 
 	dataKey := psdc.ConvertToOrderItemKey()
 
-	deliverToParty := sdc.DeliveryDocumentInputParameters.DeliverToParty
-	deliverFromParty := sdc.DeliveryDocumentInputParameters.DeliverFromParty
-	deliverToPlant := sdc.DeliveryDocumentInputParameters.DeliverToPlant
-	deliverFromPlant := sdc.DeliveryDocumentInputParameters.DeliverFromPlant
+	deliverToParty := sdc.InputParameters.DeliverToParty
+	deliverFromParty := sdc.InputParameters.DeliverFromParty
+	deliverToPlant := sdc.InputParameters.DeliverToPlant
+	deliverFromPlant := sdc.InputParameters.DeliverFromPlant
 
 	for i := range *deliverToParty {
 		dataKey.DeliverToParty = append(dataKey.DeliverToParty, (*deliverToParty)[i])
@@ -171,14 +171,14 @@ func (f *SubFunction) OrderItemByRangeSpec(
 ) ([]*api_processing_data_formatter.OrderItem, error) {
 	dataKey := psdc.ConvertToOrderItemKey()
 
-	dataKey.DeliverToPartyFrom = sdc.DeliveryDocumentInputParameters.DeliverToPartyFrom
-	dataKey.DeliverToPartyTo = sdc.DeliveryDocumentInputParameters.DeliverToPartyTo
-	dataKey.DeliverFromPartyFrom = sdc.DeliveryDocumentInputParameters.DeliverFromPartyFrom
-	dataKey.DeliverFromPartyTo = sdc.DeliveryDocumentInputParameters.DeliverFromPartyTo
-	dataKey.DeliverToPlantFrom = sdc.DeliveryDocumentInputParameters.DeliverToPlantFrom
-	dataKey.DeliverToPlantTo = sdc.DeliveryDocumentInputParameters.DeliverToPlantTo
-	dataKey.DeliverFromPlantFrom = sdc.DeliveryDocumentInputParameters.DeliverFromPlantFrom
-	dataKey.DeliverFromPlantTo = sdc.DeliveryDocumentInputParameters.DeliverFromPlantTo
+	dataKey.DeliverToPartyFrom = sdc.InputParameters.DeliverToPartyFrom
+	dataKey.DeliverToPartyTo = sdc.InputParameters.DeliverToPartyTo
+	dataKey.DeliverFromPartyFrom = sdc.InputParameters.DeliverFromPartyFrom
+	dataKey.DeliverFromPartyTo = sdc.InputParameters.DeliverFromPartyTo
+	dataKey.DeliverToPlantFrom = sdc.InputParameters.DeliverToPlantFrom
+	dataKey.DeliverToPlantTo = sdc.InputParameters.DeliverToPlantTo
+	dataKey.DeliverFromPlantFrom = sdc.InputParameters.DeliverFromPlantFrom
+	dataKey.DeliverFromPlantTo = sdc.InputParameters.DeliverFromPlantTo
 
 	count := new(int)
 	err := f.db.QueryRow(
@@ -283,7 +283,7 @@ func (f *SubFunction) OrdersItemScheduleLineByArraySpec(
 	dataKey := psdc.ConvertToOrdersItemScheduleLineKey()
 
 	orderItem := psdc.OrderItem
-	confirmedDeliveryDate := sdc.DeliveryDocumentInputParameters.ConfirmedDeliveryDate
+	confirmedDeliveryDate := sdc.InputParameters.ConfirmedDeliveryDate
 
 	for i := range orderItem {
 		dataKey.OrderID = append(dataKey.OrderID, (orderItem)[i].OrderID)
@@ -359,8 +359,8 @@ func (f *SubFunction) OrdersItemScheduleLineByRangeSpec(
 		args = append(args, v)
 	}
 
-	dataKey.ConfirmedDeliveryDateFrom = sdc.DeliveryDocumentInputParameters.ConfirmedDeliveryDateFrom
-	dataKey.ConfirmedDeliveryDateTo = sdc.DeliveryDocumentInputParameters.ConfirmedDeliveryDateTo
+	dataKey.ConfirmedDeliveryDateFrom = sdc.InputParameters.ConfirmedDeliveryDateFrom
+	dataKey.ConfirmedDeliveryDateTo = sdc.InputParameters.ConfirmedDeliveryDateTo
 
 	args = append(args, dataKey.ConfirmedDeliveryDateFrom, dataKey.ConfirmedDeliveryDateTo, dataKey.ItemScheduleLineDeliveryBlockStatus, dataKey.OpenConfirmedQuantityInBaseUnit)
 
@@ -484,6 +484,12 @@ func (f *SubFunction) CreateSdc(
 				return
 			}
 		}
+		// 1-3. DeliveryDocument
+		psdc.CalculateDeliveryDocument, e = f.CalculateDeliveryDocument(sdc, psdc)
+		if e != nil {
+			err = e
+			return
+		}
 
 		// 1-1. オーダー参照レコード・値の取得（オーダーヘッダ）  //IまたはII
 		psdc.OrdersHeader, e = f.OrdersHeader(sdc, psdc)
@@ -522,17 +528,6 @@ func (f *SubFunction) CreateSdc(
 			// 4-2. HeaderNetWeight  //1-2-1
 			psdc.HeaderNetWeight = f.HeaderNetWeight(sdc, psdc)
 		}(wg)
-	}(&wg)
-
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		// 1-3. DeliveryDocument
-		psdc.CalculateDeliveryDocument, e = f.CalculateDeliveryDocument(sdc, psdc)
-		if e != nil {
-			err = e
-			return
-		}
 	}(&wg)
 
 	wg.Add(1)

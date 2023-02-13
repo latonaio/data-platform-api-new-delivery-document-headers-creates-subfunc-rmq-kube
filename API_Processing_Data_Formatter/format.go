@@ -351,16 +351,24 @@ func (psdc *SDC) ConvertToCalculateDeliveryDocumentQueryGets(rows *sql.Rows) (*C
 	return &res, nil
 }
 
-func (psdc *SDC) ConvertToCalculateDeliveryDocument(deliveryDocumentLatestNumber *int, deliveryDocument int) *CalculateDeliveryDocument {
+func (psdc *SDC) ConvertToCalculateDeliveryDocument(deliveryDocumentLatestNumber *int, deliveryDocument, orderID, orderItem int, deliverFromPlant, deliverToPlant string) *CalculateDeliveryDocument {
 	pm := &requests.CalculateDeliveryDocument{}
 
 	pm.DeliveryDocumentLatestNumber = deliveryDocumentLatestNumber
 	pm.DeliveryDocument = deliveryDocument
+	pm.OrderID = orderID
+	pm.OrderItem = orderItem
+	pm.DeliverFromPlant = deliverFromPlant
+	pm.DeliverToPlant = deliverToPlant
 
 	data := pm
 	res := CalculateDeliveryDocument{
 		DeliveryDocumentLatestNumber: data.DeliveryDocumentLatestNumber,
 		DeliveryDocument:             data.DeliveryDocument,
+		OrderID:                      data.OrderID,
+		OrderItem:                    data.OrderItem,
+		DeliverFromPlant:             data.DeliverFromPlant,
+		DeliverToPlant:               data.DeliverToPlant,
 	}
 
 	return &res
@@ -635,6 +643,8 @@ func (psdc *SDC) ConvertToOrdersItem(rows *sql.Rows) ([]*OrdersItem, error) {
 			&pm.ItemGrossWeight,
 			&pm.ProductNetWeight,
 			&pm.ItemNetWeight,
+			&pm.InternalCapacityQuantity,
+			&pm.InternalCapacityQuantityUnit,
 			&pm.NetAmount,
 			&pm.TaxAmount,
 			&pm.GrossAmount,
@@ -720,6 +730,8 @@ func (psdc *SDC) ConvertToOrdersItem(rows *sql.Rows) ([]*OrdersItem, error) {
 			ItemGrossWeight:                               data.ItemGrossWeight,
 			ProductNetWeight:                              data.ProductNetWeight,
 			ItemNetWeight:                                 data.ItemNetWeight,
+			InternalCapacityQuantity:                      data.InternalCapacityQuantity,
+			InternalCapacityQuantityUnit:                  data.InternalCapacityQuantityUnit,
 			NetAmount:                                     data.NetAmount,
 			TaxAmount:                                     data.TaxAmount,
 			GrossAmount:                                   data.GrossAmount,
