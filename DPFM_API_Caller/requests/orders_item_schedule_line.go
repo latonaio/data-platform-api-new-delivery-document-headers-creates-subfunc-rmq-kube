@@ -6,7 +6,7 @@ type OrdersItemScheduleLine struct {
 	ScheduleLine                          int      `json:"ScheduleLine"`
 	RequestedDeliveryDate                 string   `json:"RequestedDeliveryDate"`
 	ConfirmedDeliveryDate                 string   `json:"ConfirmedDeliveryDate"`
-	OrderQuantityInBaseUnit               float32  `json:"OrderQuantityInBaseUnit"`
+	OriginalOrderQuantityInBaseUnit       float32  `json:"OriginalOrderQuantityInBaseUnit"`
 	ConfirmedOrderQuantityByPDTAvailCheck float32  `json:"ConfirmedOrderQuantityByPDTAvailCheck"`
 	OpenConfirmedQuantityInBaseUnit       *float32 `json:"OpenConfirmedQuantityInBaseUnit"`
 	StockIsFullyConfirmed                 *bool    `json:"StockIsFullyConfirmed"`

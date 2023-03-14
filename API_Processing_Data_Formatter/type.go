@@ -83,7 +83,7 @@ type OrdersItemScheduleLine struct {
 	ScheduleLine                          int      `json:"ScheduleLine"`
 	RequestedDeliveryDate                 string   `json:"RequestedDeliveryDate"`
 	ConfirmedDeliveryDate                 string   `json:"ConfirmedDeliveryDate"`
-	OrderQuantityInBaseUnit               float32  `json:"OrderQuantityInBaseUnit"`
+	OriginalOrderQuantityInBaseUnit       float32  `json:"OriginalOrderQuantityInBaseUnit"`
 	ConfirmedOrderQuantityByPDTAvailCheck float32  `json:"ConfirmedOrderQuantityByPDTAvailCheck"`
 	OpenConfirmedQuantityInBaseUnit       *float32 `json:"OpenConfirmedQuantityInBaseUnit"`
 	StockIsFullyConfirmed                 *bool    `json:"StockIsFullyConfirmed"`
@@ -114,17 +114,6 @@ type OrdersHeader struct {
 	Incoterms                        *string `json:"Incoterms"`
 	IsExportImport                   *bool   `json:"IsExportImport"`
 	HeaderText                       *string `json:"HeaderText"`
-}
-
-type CalculateDeliveryDocumentKey struct {
-	ServiceLabel             string `json:"service_label"`
-	FieldNameWithNumberRange string `json:"FieldNameWithNumberRange"`
-}
-
-type CalculateDeliveryDocumentQueryGets struct {
-	ServiceLabel                 string `json:"service_label"`
-	FieldNameWithNumberRange     string `json:"FieldNameWithNumberRange"`
-	DeliveryDocumentLatestNumber *int   `json:"DeliveryDocumentLatestNumber"`
 }
 
 type CalculateDeliveryDocument struct {

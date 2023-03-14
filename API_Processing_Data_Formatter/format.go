@@ -146,6 +146,10 @@ func (psdc *SDC) ConvertToOrderItemInIndividualProcess(rows *sql.Rows) ([]*Order
 		err := rows.Scan(
 			&pm.OrderID,
 			&pm.OrderItem,
+			&pm.DeliverToParty,
+			&pm.DeliverFromParty,
+			&pm.DeliverToPlant,
+			&pm.DeliverFromPlant,
 			&pm.ItemCompleteDeliveryIsDefined,
 			&pm.ItemDeliveryStatus,
 			&pm.ItemDeliveryBlockStatus,
@@ -158,6 +162,10 @@ func (psdc *SDC) ConvertToOrderItemInIndividualProcess(rows *sql.Rows) ([]*Order
 		res = append(res, &OrderItem{
 			OrderID:                       data.OrderID,
 			OrderItem:                     data.OrderItem,
+			DeliverToParty:                data.DeliverToParty,
+			DeliverFromParty:              data.DeliverFromParty,
+			DeliverToPlant:                data.DeliverToPlant,
+			DeliverFromPlant:              data.DeliverFromPlant,
 			ItemCompleteDeliveryIsDefined: data.ItemCompleteDeliveryIsDefined,
 			ItemDeliveryStatus:            data.ItemDeliveryStatus,
 			ItemDeliveryBlockStatus:       data.ItemDeliveryBlockStatus,
@@ -205,7 +213,7 @@ func (psdc *SDC) ConvertToOrdersItemScheduleLine(rows *sql.Rows) ([]*OrdersItemS
 			&pm.ScheduleLine,
 			&pm.RequestedDeliveryDate,
 			&pm.ConfirmedDeliveryDate,
-			&pm.OrderQuantityInBaseUnit,
+			&pm.OriginalOrderQuantityInBaseUnit,
 			&pm.ConfirmedOrderQuantityByPDTAvailCheck,
 			&pm.OpenConfirmedQuantityInBaseUnit,
 			&pm.StockIsFullyConfirmed,
@@ -222,7 +230,7 @@ func (psdc *SDC) ConvertToOrdersItemScheduleLine(rows *sql.Rows) ([]*OrdersItemS
 			ScheduleLine:                          data.ScheduleLine,
 			RequestedDeliveryDate:                 data.RequestedDeliveryDate,
 			ConfirmedDeliveryDate:                 data.ConfirmedDeliveryDate,
-			OrderQuantityInBaseUnit:               data.OrderQuantityInBaseUnit,
+			OriginalOrderQuantityInBaseUnit:       data.OriginalOrderQuantityInBaseUnit,
 			ConfirmedOrderQuantityByPDTAvailCheck: data.ConfirmedOrderQuantityByPDTAvailCheck,
 			OpenConfirmedQuantityInBaseUnit:       data.OpenConfirmedQuantityInBaseUnit,
 			StockIsFullyConfirmed:                 data.StockIsFullyConfirmed,
@@ -307,54 +315,9 @@ func (psdc *SDC) ConvertToOrdersHeader(rows *sql.Rows) ([]*OrdersHeader, error) 
 	return res, nil
 }
 
-func (psdc *SDC) ConvertToCalculateDeliveryDocumentKey() *CalculateDeliveryDocumentKey {
-	pm := &requests.CalculateDeliveryDocumentKey{
-		FieldNameWithNumberRange: "DeliveryDocument",
-	}
-
-	data := pm
-	res := CalculateDeliveryDocumentKey{
-		ServiceLabel:             data.ServiceLabel,
-		FieldNameWithNumberRange: data.FieldNameWithNumberRange,
-	}
-
-	return &res
-}
-
-func (psdc *SDC) ConvertToCalculateDeliveryDocumentQueryGets(rows *sql.Rows) (*CalculateDeliveryDocumentQueryGets, error) {
-	defer rows.Close()
-	pm := &requests.CalculateDeliveryDocumentQueryGets{}
-
-	i := 0
-	for rows.Next() {
-		i++
-		err := rows.Scan(
-			&pm.ServiceLabel,
-			&pm.FieldNameWithNumberRange,
-			&pm.DeliveryDocumentLatestNumber,
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if i == 0 {
-		return nil, xerrors.Errorf("'data_platform_number_range_latest_number_data'テーブルに対象のレコードが存在しません。")
-	}
-
-	data := pm
-	res := CalculateDeliveryDocumentQueryGets{
-		ServiceLabel:                 data.ServiceLabel,
-		FieldNameWithNumberRange:     data.FieldNameWithNumberRange,
-		DeliveryDocumentLatestNumber: data.DeliveryDocumentLatestNumber,
-	}
-
-	return &res, nil
-}
-
-func (psdc *SDC) ConvertToCalculateDeliveryDocument(deliveryDocumentLatestNumber *int, deliveryDocument, orderID, orderItem int, deliverFromPlant, deliverToPlant string) *CalculateDeliveryDocument {
+func (psdc *SDC) ConvertToCalculateDeliveryDocument(deliveryDocument, orderID, orderItem int, deliverFromPlant, deliverToPlant string) *CalculateDeliveryDocument {
 	pm := &requests.CalculateDeliveryDocument{}
 
-	pm.DeliveryDocumentLatestNumber = deliveryDocumentLatestNumber
 	pm.DeliveryDocument = deliveryDocument
 	pm.OrderID = orderID
 	pm.OrderItem = orderItem
@@ -363,12 +326,11 @@ func (psdc *SDC) ConvertToCalculateDeliveryDocument(deliveryDocumentLatestNumber
 
 	data := pm
 	res := CalculateDeliveryDocument{
-		DeliveryDocumentLatestNumber: data.DeliveryDocumentLatestNumber,
-		DeliveryDocument:             data.DeliveryDocument,
-		OrderID:                      data.OrderID,
-		OrderItem:                    data.OrderItem,
-		DeliverFromPlant:             data.DeliverFromPlant,
-		DeliverToPlant:               data.DeliverToPlant,
+		DeliveryDocument: data.DeliveryDocument,
+		OrderID:          data.OrderID,
+		OrderItem:        data.OrderItem,
+		DeliverFromPlant: data.DeliverFromPlant,
+		DeliverToPlant:   data.DeliverToPlant,
 	}
 
 	return &res
