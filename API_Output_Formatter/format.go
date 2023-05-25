@@ -62,6 +62,7 @@ func ConvertToHeader(
 		header.HeaderBillingConfStatus = getStringPtr("NP")
 		header.HeaderGrossWeight = psdc.HeaderGrossWeight.HeaderGrossWeight
 		header.HeaderNetWeight = psdc.HeaderNetWeight.HeaderNetWeight
+		// header.HeaderWeightUnit = //TBD
 		header.HeaderDeliveryBlockStatus = getBoolPtr(false)
 		header.HeaderIssuingBlockStatus = getBoolPtr(false)
 		header.HeaderReceivingBlockStatus = getBoolPtr(false)
